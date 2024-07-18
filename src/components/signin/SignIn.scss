@@ -1,0 +1,72 @@
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: var(--light-blue);
+  box-shadow: 0 6px 16px rgb(52 105 203 / 16%);
+  max-width: 18rem;
+  width: 100%;
+  margin-inline: auto;
+  .form-group {
+    margin-bottom: 15px;
+    width: 100%;
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: var(--red);
+    }
+
+    input,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid var(--blue);
+      font-size: 13px;
+      padding: 6px 4px;
+      background-color: white;
+      color: black;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(100%);
+    }
+
+    input:focus,
+    select:focus {
+      border: 1px solid var(--red);
+    }
+
+    .error {
+      color: var(--red);
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+    .radio-options {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+  }
+  .below-msg {
+    color: black;
+    .click-span {
+      color: var(--red);
+      cursor: pointer;
+    }
+  }
+
+  .submit-btn {
+    padding: 10px 20px;
+    background-color: var(--red);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
