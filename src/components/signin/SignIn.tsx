@@ -32,8 +32,8 @@ const SignIn = ({ setPage }: LOGIN_SIGNUP_PAGE_PROPS) => {
       });
 
       const user = await response.json();
-      console.log(user);
-      if (!user.success) return alert(user.message);
+      if (!response.ok) return alert("Could not log in");
+      localStorage.setItem("token", user.token);
       return navigate(`/user/${user._id}`);
     } catch (error) {
       return alert("There is some error, please try again later!");

@@ -22,12 +22,16 @@ const SignUp = ({ setPage }: LOGIN_SIGNUP_PAGE_PROPS) => {
   const handleOnSubmit = async (data: SIGN_UP_FORM_VALUES) => {
     delete data.role;
     try {
-      await fetch("http://localhost:5450/api/auth/register", {
+      const response = await fetch("http://localhost:5450/api/auth/register", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           ...data,
         }),
       });
+      if (!response.ok) alert("Could not create user");
       alert("User created");
       return setPage(1);
     } catch (error) {

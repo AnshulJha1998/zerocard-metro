@@ -1,9 +1,9 @@
 import train from "../../assets/images/train.png";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { USER_FORM_VALUES } from "../../common/types";
+import { JOURNEY_TYPE, USER_FORM_VALUES, USER_TYPE } from "../../common/types";
 import "./User.scss";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { convertDateFormat, passengerTypePrice } from "../../common/utils";
 import Dialog from "../../components/dialog/Dialog";
 
@@ -15,15 +15,37 @@ const User = () => {
   const [rechargeLoading, setRechargeLoading] = useState<boolean>(false);
   const [ticketBooked, setTicketBooked] = useState<boolean>(false);
 
-  const [user, setUser] = useState({
-    username: "John",
-    passengerType: "kid",
+  const token = localStorage.getItem("token");
+  const [user, setUser] = useState<USER_TYPE<JOURNEY_TYPE>>({
+    _id: "",
+    username: "",
+    email: "",
+    phone: "",
+    password: "",
+    role: "",
+    passengerType: "",
     zeroCard: {
-      cardNumber: 153235,
-      balance: 20,
-      lastRecharge: convertDateFormat(Date.now()), //need to fix
+      cardNumber: 0,
+      balance: 0,
+      _id: "",
     },
+    journeys: [],
   });
+
+  const fetchUserDetails = useCallback(() => {
+    fetch(`http://localhost:5450/api/users/${id}`, {
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setUser(data))
+      .catch((err) => alert(err));
+  }, [id, token]);
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, [fetchUserDetails]);
 
   const { register, handleSubmit, formState, watch, reset } =
     useForm<USER_FORM_VALUES>({
@@ -63,10 +85,11 @@ const User = () => {
 
   const fromValue = watch("from");
   const toValue = watch("to");
+  const dateValue = watch("date");
 
   const today = new Date().toISOString().split("T")[0];
 
-  const handlePay = (e: MouseEvent<HTMLButtonElement>) => {
+  const handlePay = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (user.zeroCard.balance < passengerTypePrice[user.passengerType]) {
@@ -78,7 +101,27 @@ const User = () => {
     setPaymentLoading(true);
 
     try {
-      setTicketBooked(true);
+      const response = await fetch(
+        "http://localhost:5450/api/users/recordJourney",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `token ${token}`,
+          },
+          body: JSON.stringify({
+            userId: id,
+            from: fromValue,
+            to: toValue,
+            date: dateValue,
+            fare: passengerTypePrice[user.passengerType],
+          }),
+        }
+      );
+      console.log(response.json());
+      console.log(response);
+      if (!response.ok) return alert("Unable to make payment");
+      fetchUserDetails();
     } catch (error) {
       return alert("There is some error!");
     } finally {
@@ -119,6 +162,10 @@ const User = () => {
             <div className="payment-info">
               <h4>To:</h4>
               <h4>{toValue}</h4>
+            </div>
+            <div className="payment-info">
+              <h4>Time:</h4>
+              <h4>{dateValue.split("T")[0]}</h4>
             </div>
             <div className="payment-info payment-total">
               <h4>Total Fare:</h4>
@@ -279,7 +326,7 @@ const User = () => {
             <h5>{user.zeroCard.cardNumber}</h5>
           </div>
           <div className="card-info">
-            <h5>Card Number:</h5>
+            <h5>Card Balance:</h5>
             <h5>{user.zeroCard.balance}</h5>
           </div>
           {user.zeroCard.lastRecharge && (

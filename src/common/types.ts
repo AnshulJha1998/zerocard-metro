@@ -35,3 +35,29 @@ export type DIALOG_PROP = {
   footer: ReactNode;
   content: ReactNode;
 };
+export type USER_TYPE<T> = {
+  _id: string;
+  username: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: string;
+  passengerType: string;
+  zeroCard: {
+    cardNumber: number;
+    balance: number;
+    _id: string;
+  };
+  journeys: T[];
+};
+
+export type JOURNEY_TYPE = {
+  travelDate: string;
+  isReturnJourney: boolean;
+  passengerType: PASSENGER_TYPE;
+  fare: number;
+  from: string;
+  to: string;
+
+  discount: number;
+};
