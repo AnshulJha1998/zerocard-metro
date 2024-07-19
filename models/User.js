@@ -26,7 +26,6 @@ const JourneySchema = new mongoose.Schema(
     travelDate: {
       type: Date,
       required: true,
-      default: Date.now,
     },
     isReturnJourney: {
       type: Boolean,
@@ -34,13 +33,22 @@ const JourneySchema = new mongoose.Schema(
     },
     passengerType: {
       type: String,
-      enum: ["kid", "adult", "senior"],
+      enum: ["kid", "adult", "old"],
       required: true,
     },
     fare: {
       type: Number,
       required: true,
     },
+    from: {
+      type: String,
+      required: true,
+    },
+    to: {
+      type: String,
+      required: true,
+    },
+
     discount: {
       type: Number,
       required: true,

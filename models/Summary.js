@@ -23,7 +23,17 @@ const SummarySchema = new mongoose.Schema({
       type: Number,
       default: 0,
     },
-    senior: {
+    old: {
+      type: Number,
+      default: 0,
+    },
+  },
+  serviceFees: {
+    newDelhi: {
+      type: Number,
+      default: 0,
+    },
+    airport: {
       type: Number,
       default: 0,
     },
