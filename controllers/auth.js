@@ -19,15 +19,16 @@ export const register = async (req, res, next) => {
       zeroCard,
     });
 
-    res.status(200).json({ msg: "User has been created.", newUser });
+    res.status(200).json({ message: "User has been created.", newUser });
   } catch (err) {
     next(err);
   }
 };
 
 export const login = async (req, res, next) => {
+  const { email, username } = req.body;
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email, username });
     if (!user) return next(createError(404, "User not found!"));
 
     const isPasswordCorrect = await bcrypt.compare(
@@ -38,7 +39,10 @@ export const login = async (req, res, next) => {
 
     const token = jwt.sign(
       { id: user._id, role: user.role, zeroCardNumber: user.zeroCard },
-      process.env.JWT
+      process.env.JWT,
+      {
+        expiresIn: 60 * 60,
+      }
     );
 
     const { password, ...otherDetails } = user._doc;
@@ -47,7 +51,7 @@ export const login = async (req, res, next) => {
         httpOnly: true,
       })
       .status(200)
-      .json({ details: { ...otherDetails } });
+      .json({ ...otherDetails, token: token });
   } catch (err) {
     next(err);
   }
