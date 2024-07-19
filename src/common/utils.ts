@@ -5,7 +5,13 @@ export const convertDateFormat = (input: number): string => {
   const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const year = date.getFullYear();
 
-  const formattedDate = `${day}-${month}-${year}`;
+  const formattedDate = `${year}-${month}-${day}`;
 
   return formattedDate;
+};
+
+export const passengerTypePrice: Record<string, number> = {
+  kid: 30,
+  adult: 100,
+  old: 20,
 };

@@ -19,7 +19,21 @@ const SignUp = ({ setPage }: LOGIN_SIGNUP_PAGE_PROPS) => {
 
   const { errors } = formState;
 
-  const handleOnSubmit = (data: SIGN_UP_FORM_VALUES) => console.log(data);
+  const handleOnSubmit = async (data: SIGN_UP_FORM_VALUES) => {
+    delete data.role;
+    try {
+      await fetch("http://localhost:5450/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          ...data,
+        }),
+      });
+      alert("User created");
+      return setPage(1);
+    } catch (error) {
+      return alert("There is some error, please try again later!");
+    }
+  };
 
   const handleClickHere = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -119,7 +133,7 @@ const SignUp = ({ setPage }: LOGIN_SIGNUP_PAGE_PROPS) => {
                   id="kid"
                   value="kid"
                   {...register("passengerType", {
-                    required: "Please proivde your age type",
+                    required: "Please provide your age type",
                   })}
                 />
               </div>
@@ -130,7 +144,7 @@ const SignUp = ({ setPage }: LOGIN_SIGNUP_PAGE_PROPS) => {
                   id="adult"
                   value="adult"
                   {...register("passengerType", {
-                    required: "Please proivde your age type",
+                    required: "Please provide your age type",
                   })}
                 />
               </div>
@@ -141,7 +155,7 @@ const SignUp = ({ setPage }: LOGIN_SIGNUP_PAGE_PROPS) => {
                   id="old"
                   value="old"
                   {...register("passengerType", {
-                    required: "Please proivde your age type",
+                    required: "Please provide your age type",
                   })}
                 />
               </div>
@@ -150,7 +164,7 @@ const SignUp = ({ setPage }: LOGIN_SIGNUP_PAGE_PROPS) => {
           <p className="error">{errors.passengerType?.message}</p>
         </div>
         <p className="below-msg">
-          Already Registerd?{" "}
+          Already Registered?{" "}
           <span className="click-span" onClick={handleClickHere}>
             Click here
           </span>{" "}

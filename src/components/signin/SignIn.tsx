@@ -19,7 +19,26 @@ const SignIn = ({ setPage }: LOGIN_SIGNUP_PAGE_PROPS) => {
 
   const { errors } = formState;
 
-  const handleOnSubmit = (data: SIGN_IN_FORM_VALUES) => navigate("/user/123"); // need to change
+  const handleOnSubmit = async (data: SIGN_IN_FORM_VALUES) => {
+    try {
+      const response = await fetch("http://localhost:5450/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+        }),
+      });
+
+      const user = await response.json();
+      console.log(user);
+      if (!user.success) return alert(user.message);
+      return navigate(`/user/${user._id}`);
+    } catch (error) {
+      return alert("There is some error, please try again later!");
+    }
+  };
 
   const handleClickHere = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
