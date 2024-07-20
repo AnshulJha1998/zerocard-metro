@@ -2,10 +2,10 @@ import train from "../../assets/images/train.png";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { JOURNEY_TYPE, USER_FORM_VALUES, USER_TYPE } from "../../common/types";
-import "./User.scss";
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { convertDateFormat, passengerTypePrice } from "../../common/utils";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
+import { calcDiscount, passengerTypePrice } from "../../common/utils";
 import Dialog from "../../components/dialog/Dialog";
+import "./User.scss";
 
 const User = () => {
   const { id } = useParams();
@@ -27,6 +27,7 @@ const User = () => {
     zeroCard: {
       cardNumber: 0,
       balance: 0,
+      lastRecharge: "",
       _id: "",
     },
     journeys: [],
@@ -118,8 +119,7 @@ const User = () => {
           }),
         }
       );
-      console.log(response.json());
-      console.log(response);
+
       if (!response.ok) return alert("Unable to make payment");
       fetchUserDetails();
     } catch (error) {
@@ -130,9 +130,24 @@ const User = () => {
     }
   };
 
-  const handleRecharge = (data: Record<string, number>) => {
+  const handleRecharge = async (data: Record<string, number>) => {
     setRechargeLoading(true);
     try {
+      const response = await fetch("http://localhost:5450/api/users/recharge", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `token ${token}`,
+        },
+        body: JSON.stringify({
+          userId: id,
+          rechargeAmount: Number(data.amount),
+          fromStation: fromValue,
+        }),
+      });
+
+      if (!response.ok) return alert("Unable to recharge");
+      fetchUserDetails();
     } catch (error) {
       return alert("There is some error!");
     } finally {
@@ -169,7 +184,9 @@ const User = () => {
             </div>
             <div className="payment-info payment-total">
               <h4>Total Fare:</h4>
-              <h4>{passengerTypePrice[user.passengerType]}</h4>
+              <h4>
+                {dateValue && calcDiscount(user, fromValue, toValue, dateValue)}
+              </h4>
             </div>
           </div>
         }

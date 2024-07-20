@@ -46,6 +46,7 @@ export type USER_TYPE<T> = {
   zeroCard: {
     cardNumber: number;
     balance: number;
+    lastRecharge: string;
     _id: string;
   };
   journeys: T[];
@@ -58,6 +59,5 @@ export type JOURNEY_TYPE = {
   fare: number;
   from: string;
   to: string;
-
   discount: number;
 };
