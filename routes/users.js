@@ -5,6 +5,7 @@ import {
   getUser,
   getUsers,
   recordJourney,
+  rechargeUserCard,
 } from "../controllers/user.js";
 import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
 
@@ -19,5 +20,7 @@ router.get("/:id", verifyUser, getUser);
 router.get("/", verifyAdmin, getUsers);
 
 router.post("/recordJourney", verifyUser, recordJourney);
+
+router.post("/recharge", verifyUser, rechargeUserCard);
 
 export default router;

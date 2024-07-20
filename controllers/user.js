@@ -29,6 +29,7 @@ export const getUser = async (req, res, next) => {
     next(err);
   }
 };
+
 export const getUsers = async (req, res, next) => {
   try {
     const users = await User.find();
@@ -40,11 +41,6 @@ export const getUsers = async (req, res, next) => {
 
 export const recordJourney = async (req, res) => {
   const { userId, from: fromStation, to: toStation, date, fare } = req.body;
-
-  const stations = {
-    "New Delhi": "newDelhi",
-    Airport: "airport",
-  };
 
   const isSameDay = (d1, d2) => {
     return (
@@ -177,5 +173,57 @@ export const recordJourney = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const rechargeUserCard = async (req, res, next) => {
+  const stations = {
+    "New Delhi": "newDelhi",
+    Airport: "airport",
+  };
+
+  try {
+    const { userId, rechargeAmount, fromStation } = req.body;
+
+    console.log(req.body);
+
+    const user = await User.findById(userId).populate("zeroCard");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const currentDate = new Date();
+    const totalAmount = rechargeAmount + 10;
+
+    user.zeroCard.balance += totalAmount;
+    user.zeroCard.lastRecharge = currentDate;
+
+    console.log("1");
+    let summary = await Summary.findOne({
+      $expr: {
+        $eq: [
+          { $dateTrunc: { date: "$date", unit: "day" } },
+          { $dateTrunc: { date: currentDate, unit: "day" } },
+        ],
+      },
+    }).sort({ date: -1 });
+
+    if (!summary) {
+      summary = new Summary({
+        date: currentDate,
+        serviceFees: {
+          [stations[fromStation]]: serviceFee,
+        },
+      });
+    }
+
+    summary.totalAmountCollected += totalAmount;
+    summary.serviceFees[stations[fromStation]] += serviceFee;
+
+    await summary.save();
+    await user.save();
+    res.json({ message: "Card recharged successfully" });
+  } catch (err) {
+    next(err);
   }
 };
