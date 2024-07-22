@@ -61,3 +61,18 @@ export type JOURNEY_TYPE = {
   to: string;
   discount: number;
 };
+
+export type SUMMARIES_TYPE = {
+  date: string;
+  totalAmountCollected: 0;
+  totalDiscountGiven: 0;
+  passengerSummary: {
+    kid: 0;
+    adult: 0;
+    old: 0;
+  };
+  serviceFees: {
+    newDelhi: 0;
+    airport: 0;
+  };
+};

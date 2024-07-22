@@ -32,8 +32,11 @@ const SignIn = ({ setPage }: LOGIN_SIGNUP_PAGE_PROPS) => {
       });
 
       const user = await response.json();
-      if (!response.ok) return alert("Could not log in");
       localStorage.setItem("token", user.token);
+      if (user.role === "admin") {
+        return navigate(`/admin/${user._id}`);
+      }
+      if (!response.ok) return alert("Could not log in");
       return navigate(`/user/${user._id}`);
     } catch (error) {
       return alert("There is some error, please try again later!");

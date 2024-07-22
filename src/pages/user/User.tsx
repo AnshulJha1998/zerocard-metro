@@ -1,5 +1,5 @@
 import train from "../../assets/images/train.png";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { JOURNEY_TYPE, USER_FORM_VALUES, USER_TYPE } from "../../common/types";
 import { MouseEvent, useCallback, useEffect, useState } from "react";
@@ -13,6 +13,7 @@ import "./User.scss";
 
 const User = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [totalModal, setTotalModal] = useState<boolean>(false);
   const [recharge, setRecharge] = useState<boolean>(false);
   const [paymentLoading, setPaymentLoading] = useState<boolean>(false);
@@ -44,9 +45,12 @@ const User = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) => setUser(data))
-      .catch((err) => alert(err));
-  }, [id, token]);
+      .then((data) => {
+        if (data.status === 403) return navigate("/");
+        setUser(data);
+      })
+      .catch((err) => console.log(err));
+  }, [id, token, navigate]);
 
   useEffect(() => {
     fetchUserDetails();
@@ -123,8 +127,8 @@ const User = () => {
           }),
         }
       );
-
-      if (!response.ok) return alert("Unable to make payment");
+      const r = await response.json();
+      if (!response.ok) return alert(r.message);
       fetchUserDetails();
     } catch (error) {
       return alert("There is some error!");
@@ -159,8 +163,18 @@ const User = () => {
       setRecharge(false);
     }
   };
+
   return (
     <div className="user-main-container">
+      <button
+        className="logout"
+        onClick={() => {
+          localStorage.clear();
+          return navigate("/");
+        }}
+      >
+        LOG OUT
+      </button>
       <Dialog
         open={totalModal}
         onClose={() => setTotalModal(false)}
@@ -195,7 +209,15 @@ const User = () => {
             </div>
           </div>
         }
-        footer={<button onClick={handlePay}>Pay</button>}
+        footer={
+          paymentLoading ? (
+            <button>
+              <div className="loader"></div>
+            </button>
+          ) : (
+            <button onClick={handlePay}>Pay</button>
+          )
+        }
       />
 
       <Dialog
@@ -237,9 +259,15 @@ const User = () => {
               <p className="error">{rechargeError.amount?.message}</p>
             </div>
 
-            <button className="recharge-btn" type="submit">
-              Recharge
-            </button>
+            {rechargeLoading ? (
+              <button>
+                <div className="loader"></div>
+              </button>
+            ) : (
+              <button className="recharge-btn" type="submit">
+                Recharge
+              </button>
+            )}
           </form>
         }
         footer={<div></div>}

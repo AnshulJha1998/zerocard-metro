@@ -19,12 +19,12 @@ body {
 
 //Loader CSS
 .loader {
-  border: 7px solid #f3f3f3;
+  border: 3px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 7px solid #3498db;
-  width: 20px;
-  height: 20px;
-  -webkit-animation: spin 1s linear infinite; /* Safari */
+  border-top: 3px solid #3498db;
+  width: 9px;
+  height: 9px;
+  -webkit-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
 }
 
