@@ -39,6 +39,15 @@ export const getUsers = async (req, res, next) => {
   }
 };
 
+export const getAllSummaries = async (req, res, next) => {
+  try {
+    const summary = await Summary.find();
+    res.status(200).json(summary);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const recordJourney = async (req, res) => {
   const { userId, from: fromStation, to: toStation, date, fare } = req.body;
 

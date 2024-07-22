@@ -6,6 +6,7 @@ import {
   getUsers,
   recordJourney,
   rechargeUserCard,
+  getAllSummaries,
 } from "../controllers/user.js";
 import { verifyAdmin, verifyUser } from "../utils/verifyToken.js";
 
@@ -18,6 +19,8 @@ router.delete("/:id", verifyUser, deleteUser);
 router.get("/:id", verifyUser, getUser);
 
 router.get("/", verifyAdmin, getUsers);
+
+router.get("/get/summaries", verifyAdmin, getAllSummaries);
 
 router.post("/recordJourney", verifyUser, recordJourney);
 

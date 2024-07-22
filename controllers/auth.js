@@ -13,11 +13,20 @@ export const register = async (req, res, next) => {
       balance: 0,
     };
 
-    const newUser = await User.create({
-      ...req.body,
-      password: hash,
-      zeroCard,
-    });
+    let newUser;
+
+    if (req.body.role === "admin") {
+      newUser = await User.create({
+        ...req.body,
+        password: hash,
+      });
+    } else {
+      newUser = await User.create({
+        ...req.body,
+        password: hash,
+        zeroCard,
+      });
+    }
 
     res.status(200).json({ message: "User has been created.", newUser });
   } catch (err) {
