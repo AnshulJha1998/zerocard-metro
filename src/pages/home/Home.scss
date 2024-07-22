@@ -1,0 +1,22 @@
+.home-main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  .delhi-metro-img {
+    width: 10rem;
+  }
+  .header {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: var(--red);
+    font-weight: bold;
+    position: fixed;
+    top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
