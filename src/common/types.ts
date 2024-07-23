@@ -35,6 +35,13 @@ export type DIALOG_PROP = {
   footer: ReactNode;
   content: ReactNode;
 };
+
+export type RECHARGE_HISTORY_TYPE = {
+  rechargeDate: string;
+  rechargeAmount: number;
+  rechargeStation: string;
+  _id: string;
+};
 export type USER_TYPE<T> = {
   _id: string;
   username: string;
@@ -47,6 +54,7 @@ export type USER_TYPE<T> = {
     cardNumber: number;
     balance: number;
     lastRecharge: string;
+    rechargeHistory: RECHARGE_HISTORY_TYPE[];
     _id: string;
   };
   journeys: T[];
@@ -75,4 +83,13 @@ export type SUMMARIES_TYPE = {
     newDelhi: 0;
     airport: 0;
   };
+};
+
+export type PASSENGER_SUMMARY_DATA_TYPE = {
+  name: string;
+  passengerType: string;
+  rechargeAmount: number;
+  travelAmount: number;
+  travelCount: number;
+  zeroCardNumber: number;
 };

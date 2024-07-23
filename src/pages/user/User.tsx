@@ -33,6 +33,7 @@ const User = () => {
       cardNumber: 0,
       balance: 0,
       lastRecharge: "",
+      rechargeHistory: [],
       _id: "",
     },
     journeys: [],

@@ -1,4 +1,4 @@
-import { JOURNEY_TYPE, USER_TYPE } from "./types";
+import { JOURNEY_TYPE, PASSENGER_SUMMARY_DATA_TYPE, USER_TYPE } from "./types";
 
 export const passengerTypePrice: Record<string, number> = {
   kid: 30,
@@ -61,4 +61,87 @@ export const calcDiscount = (
 
   totalAmount -= discount;
   return totalAmount;
+};
+
+export const getTotal = (users: USER_TYPE<JOURNEY_TYPE>[], date: string) => {
+  const totalFare = users.reduce((acc, user) => {
+    if (user.role === "user") {
+      acc += user.journeys.reduce((journeyAcc, journey) => {
+        if (isSameDay(journey.travelDate, date)) {
+          journeyAcc += journey.fare;
+        }
+        return journeyAcc;
+      }, 0);
+    }
+    return acc;
+  }, 0);
+
+  const totalRecharges = users.reduce((acc, user) => {
+    if (user.role === "user" && user.zeroCard) {
+      acc += user.zeroCard.rechargeHistory.reduce((rechargeAcc, recharge) => {
+        if (isSameDay(recharge.rechargeDate, date)) {
+          rechargeAcc += recharge.rechargeAmount;
+        }
+        return rechargeAcc;
+      }, 0);
+    }
+    return acc;
+  }, 0);
+
+  const travelCounts: Record<string, number> = users.reduce(
+    (acc: Record<string, number>, user) => {
+      const journeys = user.journeys.filter((journey) =>
+        isSameDay(journey.travelDate, date)
+      );
+      journeys.forEach((journey) => {
+        acc[journey.passengerType] =
+          ((acc[journey.passengerType] || 0) as number) + 1;
+      });
+      return acc;
+    },
+    {}
+  );
+
+  const data: PASSENGER_SUMMARY_DATA_TYPE[] = users
+    .filter((user) => user.role === "user")
+    .filter((user) => {
+      const journeys = user.journeys.filter((journey) =>
+        isSameDay(journey.travelDate, date)
+      );
+      const recharges = user.zeroCard.rechargeHistory.filter((recharge) =>
+        isSameDay(recharge.rechargeDate, date)
+      );
+      return journeys.length > 0 || recharges.length > 0;
+    })
+    .map((user) => {
+      const journeys = user.journeys.filter((journey) =>
+        isSameDay(journey.travelDate, date)
+      );
+      const travelAmount = journeys.reduce(
+        (acc, journey) => acc + journey.fare,
+        0
+      );
+      const rechargeAmount = user.zeroCard.rechargeHistory
+        .filter((recharge) => isSameDay(recharge.rechargeDate, date))
+        .reduce((acc, recharge) => acc + recharge.rechargeAmount, 0);
+      return {
+        passengerType: user.passengerType,
+        name: user.username,
+        travelAmount,
+        rechargeAmount,
+        zeroCardNumber: user.zeroCard.cardNumber,
+        travelCount: journeys.length,
+      };
+    })
+    .sort((a, b) => {
+      const order = ["old", "adult", "kid"];
+      return order.indexOf(a.passengerType) - order.indexOf(b.passengerType);
+    });
+
+  return {
+    totalFare,
+    totalRecharges,
+    data,
+    travelCounts,
+  };
 };

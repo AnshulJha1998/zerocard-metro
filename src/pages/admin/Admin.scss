@@ -1,18 +1,86 @@
 .admin-main-container {
-  .amount-summary {
-    .date-summary {
-      h3 {
-        color: var(--red);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-inline: 8rem;
+  .date-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    width: 100%;
+    h4 {
+      color: var(--red);
+    }
+    select {
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid var(--blue);
+      font-size: 13px;
+      padding: 6px 4px;
+      background-color: white;
+      color: black;
+    }
+  }
+  .loader-summary {
+    border: 3px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 3px solid #3498db;
+    width: 16px;
+    height: 16px;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+  }
+  .amount-summary,
+  .passenger-summary {
+    color: black;
+    border: 1px solid var(--slight-hard-pink);
+    overflow: hidden;
+    background-color: var(--pink);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border-radius: 8px;
+    margin-block: 2rem;
+    width: 100%;
+
+    header {
+      font-weight: bold;
+
+      color: var(--red);
+    }
+    table,
+    th,
+    td {
+      border: 1px solid var(--red);
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    table {
+      margin-top: 2rem;
+      th {
+        position: sticky;
+        top: 0;
       }
-      select {
-        width: 100%;
-        box-sizing: border-box;
-        border-radius: 4px;
-        border: 1px solid var(--blue);
-        font-size: 13px;
-        padding: 6px 4px;
-        background-color: white;
-        color: black;
+      td {
+        min-width: 60px;
+      }
+
+      tr {
+        td:last-child {
+          color: var(--dark-green);
+          font-weight: 500;
+        }
+        td:nth-last-child(2) {
+          color: var(--red);
+          font-weight: 500;
+        }
+        td:nth-last-child(3) {
+          color: var(--other-green);
+          font-weight: 500;
+        }
       }
     }
   }
